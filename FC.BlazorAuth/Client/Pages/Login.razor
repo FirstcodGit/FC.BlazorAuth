@@ -1,0 +1,23 @@
+﻿@inject HttpClient Http
+@inject CustomAuthenticationStateProvider AuthStateProvider
+
+<h3>Login</h3>
+
+<button @onclick="@(() => GetSignInMethod())">Sign In</button>
+
+@code {
+
+    private async Task GetSignInMethod()
+    {
+        SignInViewModel model = new SignInViewModel()
+        {
+            CustomerEmailAddress = "info@firstcod.com",
+            CustomerPassword = "123"
+        };
+
+        var response = await Http.PostJsonAsync<CustomerViewModel>("api/account", model);
+
+        if (response.Auth)
+            await AuthStateProvider.SetTokenAsync(response.Token, response.Expired);
+    }
+}
